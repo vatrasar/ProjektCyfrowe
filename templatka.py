@@ -80,6 +80,7 @@ class Ui_MainWindow(object):
         self.plot3=pg.PlotWidget()
         f, t, Zxx = signal.stft(self.data, self.fs, nperseg=256,noverlap=256//2,window='hann')
         Zxx=abs(Zxx)
+        Zxx = 20 * np.log10(Zxx)
         # Interpret image data as row-major instead of col-major
         pg.setConfigOptions(imageAxisOrder='row-major')
 
