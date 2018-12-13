@@ -12,6 +12,7 @@ import pyqtgraph as pg
 from scipy.io import wavfile
 from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
+from scipy import signal
 
 class Ui_MainWindow(object):
 
@@ -25,6 +26,7 @@ class Ui_MainWindow(object):
 
         self.sekundy = len(data) / float(samplerate)
         self.times = np.arange(len(data)) / float(samplerate)
+        self.fs=samplerate
 
     def setupUi(self, MainWindow,path_to_data):
         self.read_data(path_to_data)
@@ -75,7 +77,48 @@ class Ui_MainWindow(object):
     def make_plots(self):
         self.plot = pg.PlotWidget(y=self.data, x=self.times)
         self.plot2 = pg.PlotWidget(y=self.data, x=self.times)
-        self.plot3=pg.PlotWidget(y=self.data, x=self.times)
+        self.plot3=pg.PlotWidget()
+        f, t, Zxx = signal.stft(self.data, self.fs, nperseg=256,noverlap=256//2,window='hann')
+        Zxx=abs(Zxx)
+        # Interpret image data as row-major instead of col-major
+        pg.setConfigOptions(imageAxisOrder='row-major')
+
+        pg.mkQApp()
+        win = pg.GraphicsLayoutWidget()
+        # A plot area (ViewBox + axes) for displaying the image
+
+
+        # Item for displaying image data
+        img = pg.ImageItem()
+        self.plot3.addItem(img)
+        # Add a histogram with which to control the gradient of the image
+        hist = pg.HistogramLUTItem()
+        # Link the histogram to the image
+        hist.setImageItem(img)
+        # If you don't add the histogram to the window, it stays invisible, but I find it useful.
+        win.addItem(hist)
+        # Show the window
+        win.show()
+        # Fit the min and max levels of the histogram to the data available
+        hist.setLevels(np.min(Zxx), np.max(Zxx))
+        # This gradient is roughly comparable to the gradient used by Matplotlib
+        # You can adjust it and then save it using hist.gradient.saveState()
+        hist.gradient.restoreState(
+            {'mode': 'rgb',
+             'ticks': [(0.5, (0, 182, 188, 255)),
+                       (1.0, (246, 111, 0, 255)),
+                       (0.0, (75, 0, 113, 255))]})
+        # Sxx contains the amplitude for each pixel
+        img.setImage(Zxx)
+        # Scale the X and Y Axis to time and frequency (standard is pixels)
+        img.scale(t[-1] / np.size(Zxx, axis=1),
+                  f[-1] / np.size(Zxx, axis=0))
+        # Limit panning/zooming to the spectrogram
+
+        # Add labels to the axis
+        self.plot3.setLabel('bottom', "Time", units='s')
+        # If you include the units, Pyqtgraph automatically scales the axis and adjusts the SI prefix (in this case kHz)
+        self.plot3.setLabel('left', "Frequency", units='Hz')
 
 
     def retranslateUi(self, MainWindow):

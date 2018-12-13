@@ -3,7 +3,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDial, QFileDialog
 import time
-
+from scipy import signal
+import matplotlib.pyplot as plt
+import numpy as np
 class Gui:
     def updatePlot(self):
         if(time.time()-self.start_time>2):
@@ -12,6 +14,7 @@ class Gui:
             self.start_time=time.time()
 
         self.ui.plot2.setXRange(*self.ui.lr.getRegion(),padding=0)
+
 
     def updateRegion(self):
         pass
@@ -30,6 +33,14 @@ class Gui:
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
         self.updatePlot()
+        f, t, Zxx = signal.stft(self.ui.data, self.ui.fs, nperseg=256,noverlap=256//2,window='hann')
+        Zxx=abs(Zxx)
+        plt.pcolormesh(t, f, np.abs(Zxx))
+        plt.title('STFT Magnitude')
+        plt.ylabel('Frequency [Hz]')
+        plt.xlabel('Time [sec]')
+
+        plt.show()
     def open(self):
         path, _ = QFileDialog.getOpenFileName()
         self.update_state(path,window)
