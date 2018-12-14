@@ -76,11 +76,12 @@ class Ui_MainWindow(object):
         self.make_sonogram()
 
     def make_sonogram(self):
-        self.plot3 = pg.PlotWidget()
+
         f, t, amplitudy = self.stft(self.data, self.fs, nperseg=256, noverlap=256 // 2, window='hann')
+        self.plot3 = pg.PlotWidget()
         amplitudy = abs(amplitudy)
         amplitudy = 20 * np.log10(amplitudy)
-
+        #tworzenie sonogramu(obrazka)
         pg.setConfigOptions(imageAxisOrder='row-major')
         pg.mkQApp()
         win = pg.GraphicsLayoutWidget()
@@ -141,13 +142,10 @@ class Ui_MainWindow(object):
 
 
     def stft(self,x, fs=1.0, window='hann', nperseg=None, noverlap=None,
-                         nfft=None, return_onesided=True,
-                         scaling='spectrum', axis=-1, boundary=None):
-        mode = 'stft'
-        detrend = 'constant'
-        y=x
+                         nfft=None, axis=-1, boundary=None):
 
-        same_data = y is x
+        detrend = 'constant'
+
         axis = int(axis)
 
 
@@ -155,16 +153,14 @@ class Ui_MainWindow(object):
 
         outdtype = np.result_type(x, np.complex64)
 
-        if same_data:
-            if x.size == 0:
-                return np.empty(x.shape), np.empty(x.shape), np.empty(x.shape)
+
+        if x.size == 0:
+            return np.empty(x.shape), np.empty(x.shape), np.empty(x.shape)
 
 
         if x.ndim > 1:
             if axis != -1:
                 x = np.rollaxis(x, axis, len(x.shape))
-                if not same_data and y.ndim > 1:
-                    y = np.rollaxis(y, axis, len(y.shape))
 
 
         if nperseg is not None:  # if specified by user
@@ -188,74 +184,41 @@ class Ui_MainWindow(object):
             noverlap = int(noverlap)
         if noverlap >= nperseg:
             raise ValueError('noverlap must be less than nperseg.')
-        nstep = nperseg - noverlap
-
-
-
-        if boundary is not None:
-            ext_func =const_ext
-            x = ext_func(x, nperseg//2, axis=-1)
-            if not same_data:
-                y = ext_func(y, nperseg//2, axis=-1)
-
-
-        # Handle detrending and window functions
-        if not detrend:
-            def detrend_func(d):
-                return d
-        elif not hasattr(detrend, '__call__'):
-            def detrend_func(d):
-                return signaltools.detrend(d, type=detrend, axis=-1)
-        elif axis != -1:
-            # Wrap this function so that it receives a shape that it could
-            # reasonably expect to receive.
-            def detrend_func(d):
-                d = np.rollaxis(d, -1, axis)
-                d = detrend(d)
-                return np.rollaxis(d, axis, len(d.shape))
-        else:
-            detrend_func = detrend
+        # nstep = nperseg - noverlap
+        # if boundary is not None:
+        #     ext_func =const_ext
+        #     x = ext_func(x, nperseg//2, axis=-1)
 
         if np.result_type(win,np.complex64) != outdtype:
             win = win.astype(outdtype)
 
 
-        if scaling == 'spectrum':
-            scale = 1.0 / win.sum()**2
-        else:
-            raise ValueError('Unknown scaling: %r' % scaling)
 
-        if mode == 'stft':
-            scale = np.sqrt(scale)
+        scale = 1.0 / win.sum()**2
 
-        if return_onesided:
-            if np.iscomplexobj(x):
-                sides = 'twosided'
-            else:
-                sides = 'onesided'
-                if not same_data:
-                    if np.iscomplexobj(y):
-                        sides = 'twosided'
 
-        else:
+
+        scale = np.sqrt(scale)
+
+
+        if np.iscomplexobj(x):
             sides = 'twosided'
+        else:
+            sides = 'onesided'
 
+        #liczenie częstotliwości
         if sides == 'twosided':
             freqs = fftpack.fftfreq(nfft, 1/fs)
         elif sides == 'onesided':
             freqs = np.fft.rfftfreq(nfft, 1/fs)
 
-        # Perform the windowed FFTs
-        result = self._fft_helper(x, win, detrend_func, nperseg, noverlap, nfft, sides)
-
-
-
+        #liczenie fft
+        result = self.licz_fft(x, win, self.detrend_func, nperseg, noverlap, nfft, sides)
+        #skalowanie
         result *= scale
-
-
+        #liczenie czasu
         time = np.arange(nperseg/2, x.shape[-1] - nperseg/2 + 1,
                          nperseg - noverlap)/float(fs)
-
 
         result = result.astype(outdtype)
 
@@ -271,34 +234,21 @@ class Ui_MainWindow(object):
 
     def dziel_na_segmenty(self,window, nperseg,input_length):
 
-        if isinstance(window, string_types) or isinstance(window, tuple):
 
-            if nperseg is None:
-                nperseg = 256  # then change to default
-            if nperseg > input_length:
-                nperseg = input_length
-            win = get_window(window, nperseg)
-        else:
-            win = np.asarray(window)
-            if len(win.shape) != 1:
-                raise ValueError('window must be 1-D')
-            if input_length < win.shape[-1]:
-                raise ValueError('window is longer than input signal')
-            if nperseg is None:
-                nperseg = win.shape[0]
-            elif nperseg is not None:
-                if nperseg != win.shape[0]:
-                    raise ValueError("value specified for nperseg is different from"
-                                     " length of window")
+        if nperseg is None:
+            nperseg = 256  # then change to default
+        if nperseg > input_length:
+            nperseg = input_length
+        win = get_window(window, nperseg)
+
         return win, nperseg
 
-    def _fft_helper(self,x, win, detrend_func, nperseg, noverlap, nfft, sides):
+    def licz_fft(self,x, win, detrend_func, nperseg, noverlap, nfft, sides):
 
         # Created strided array of data segments
         if nperseg == 1 and noverlap == 0:
             result = x[..., np.newaxis]
         else:
-            # http://stackoverflow.com/a/5568169
             step = nperseg - noverlap
             shape = x.shape[:-1]+((x.shape[-1]-noverlap)//step, nperseg)
             strides = x.strides[:-1]+(step*x.strides[-1], x.strides[-1])
@@ -320,6 +270,9 @@ class Ui_MainWindow(object):
         result = func(result, n=nfft)
 
         return result
+
+    def detrend_func(self,d):
+        return signaltools.detrend(d, type='constant', axis=-1)
 
 
 
