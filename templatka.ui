@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>723</width>
     <height>727</height>
    </rect>
   </property>
@@ -34,7 +34,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>723</width>
      <height>22</height>
     </rect>
    </property>
@@ -44,12 +44,125 @@
     </property>
     <addaction name="actionotw_rz"/>
    </widget>
+   <widget class="QMenu" name="overlap40">
+    <property name="title">
+     <string>Overlap</string>
+    </property>
+    <addaction name="overlap_10"/>
+    <addaction name="overlap20"/>
+    <addaction name="action40"/>
+    <addaction name="overlap50"/>
+   </widget>
+   <widget class="QMenu" name="menusegmenty">
+    <property name="title">
+     <string>Segmenty</string>
+    </property>
+    <addaction name="segment_256"/>
+    <addaction name="segment_512"/>
+    <addaction name="segment_1024"/>
+   </widget>
+   <widget class="QMenu" name="menuOkna">
+    <property name="title">
+     <string>Okna</string>
+    </property>
+    <addaction name="actionboxcar"/>
+    <addaction name="actiontriang"/>
+    <addaction name="actionblackman"/>
+    <addaction name="actionhamming"/>
+    <addaction name="actionhann"/>
+    <addaction name="actionbartlett"/>
+    <addaction name="actionflattop"/>
+    <addaction name="actionparzen"/>
+   </widget>
    <addaction name="menuPlik"/>
+   <addaction name="overlap40"/>
+   <addaction name="menusegmenty"/>
+   <addaction name="menuOkna"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionotw_rz">
    <property name="text">
     <string>otwórz</string>
+   </property>
+  </action>
+  <action name="overlap_10">
+   <property name="text">
+    <string>10</string>
+   </property>
+  </action>
+  <action name="overlap20">
+   <property name="text">
+    <string>20</string>
+   </property>
+  </action>
+  <action name="overlap30">
+   <property name="text">
+    <string>30</string>
+   </property>
+  </action>
+  <action name="action40">
+   <property name="text">
+    <string>40</string>
+   </property>
+  </action>
+  <action name="overlap50">
+   <property name="text">
+    <string>50</string>
+   </property>
+  </action>
+  <action name="segment_256">
+   <property name="text">
+    <string>256</string>
+   </property>
+  </action>
+  <action name="segment_512">
+   <property name="text">
+    <string>512</string>
+   </property>
+  </action>
+  <action name="segment_1024">
+   <property name="text">
+    <string>1024</string>
+   </property>
+  </action>
+  <action name="actionboxcar">
+   <property name="text">
+    <string>boxcar</string>
+   </property>
+  </action>
+  <action name="actiontriang">
+   <property name="text">
+    <string>triang</string>
+   </property>
+  </action>
+  <action name="actionblackman">
+   <property name="text">
+    <string>blackman</string>
+   </property>
+  </action>
+  <action name="actionhamming">
+   <property name="text">
+    <string>hamming</string>
+   </property>
+  </action>
+  <action name="actionhann">
+   <property name="text">
+    <string>hann</string>
+   </property>
+  </action>
+  <action name="actionbartlett">
+   <property name="text">
+    <string>bartlett</string>
+   </property>
+  </action>
+  <action name="actionflattop">
+   <property name="text">
+    <string>flattop</string>
+   </property>
+  </action>
+  <action name="actionparzen">
+   <property name="text">
+    <string>parzen</string>
    </property>
   </action>
  </widget>

@@ -21,7 +21,7 @@ class Gui:
         sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
         sonogram_data = self.ui.data[sonogram_times]
         f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=256, noverlap=256 // 2, window='hann')
-        amplitudy = abs(amplitudy)
+        amplitudy = np.abs(amplitudy)
         amplitudy = 20 * np.log10(amplitudy)
         self.ui.img.setImage(amplitudy)
         # self.ui.img.scale(t[-1] / np.size(amplitudy, axis=1),
@@ -35,7 +35,7 @@ class Gui:
         self.ui.setupUi(window,"dzwieki/bzyk.wav")
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
-        self.ui.otworz.triggered.connect(self.open)
+        self.ui.otworz_plik.triggered.connect(self.open)
         self.updatePlot()
         self.window=window
 
