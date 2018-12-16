@@ -141,13 +141,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    def stft(self,x, fs=1.0, window='hann', nperseg=None, noverlap=None,
-                         nfft=None, axis=-1, boundary=None):
-
-        detrend = 'constant'
-
-        axis = int(axis)
-
+    def stft(self,x, fs=1.0, window='hann', nperseg=256, noverlap=None):
 
         x = np.asarray(x)
 
@@ -157,13 +151,7 @@ class Ui_MainWindow(object):
         if x.size == 0:
             return np.empty(x.shape), np.empty(x.shape), np.empty(x.shape)
 
-
-        if x.ndim > 1:
-            if axis != -1:
-                x = np.rollaxis(x, axis, len(x.shape))
-
-
-        if nperseg is not None:  # if specified by user
+        if nperseg is not None:  # jeśli dane przez użytkownika
             nperseg = int(nperseg)
             if nperseg < 1:
                 raise ValueError('nperseg must be a positive integer')
@@ -171,23 +159,13 @@ class Ui_MainWindow(object):
 
         win, nperseg = self.dziel_na_segmenty(window, nperseg,input_length=x.shape[-1])
 
-        if nfft is None:
-            nfft = nperseg
-        elif nfft < nperseg:
-            raise ValueError('nfft must be greater than or equal to nperseg.')
-        else:
-            nfft = int(nfft)
+
 
         if noverlap is None:
             noverlap = nperseg//2
         else:
             noverlap = int(noverlap)
-        if noverlap >= nperseg:
-            raise ValueError('noverlap must be less than nperseg.')
-        # nstep = nperseg - noverlap
-        # if boundary is not None:
-        #     ext_func =const_ext
-        #     x = ext_func(x, nperseg//2, axis=-1)
+
 
         if np.result_type(win,np.complex64) != outdtype:
             win = win.astype(outdtype)
@@ -208,12 +186,12 @@ class Ui_MainWindow(object):
 
         #liczenie częstotliwości
         if sides == 'twosided':
-            freqs = fftpack.fftfreq(nfft, 1/fs)
+            freqs = fftpack.fftfreq(nperseg, 1/fs)
         elif sides == 'onesided':
-            freqs = np.fft.rfftfreq(nfft, 1/fs)
+            freqs = np.fft.rfftfreq(nperseg, 1/fs)
 
         #liczenie fft
-        result = self.licz_fft(x, win, self.detrend_func, nperseg, noverlap, nfft, sides)
+        result = self.licz_fft(x, win, self.detrend_func, nperseg, noverlap, sides)
         #skalowanie
         result *= scale
         #liczenie czasu
@@ -223,11 +201,10 @@ class Ui_MainWindow(object):
         result = result.astype(outdtype)
 
 
-        if axis < 0:
-            axis -= 1
 
 
-        result = np.rollaxis(result, -1, axis)
+
+        result = np.rollaxis(result, -1, -2)
 
         return freqs, time, result
 
@@ -235,15 +212,14 @@ class Ui_MainWindow(object):
     def dziel_na_segmenty(self,window, nperseg,input_length):
 
 
-        if nperseg is None:
-            nperseg = 256  # then change to default
+
         if nperseg > input_length:
             nperseg = input_length
         win = get_window(window, nperseg)
 
         return win, nperseg
 
-    def licz_fft(self,x, win, detrend_func, nperseg, noverlap, nfft, sides):
+    def licz_fft(self,x, win, detrend_func, nperseg, noverlap, sides):
 
         # Created strided array of data segments
         if nperseg == 1 and noverlap == 0:
@@ -267,7 +243,7 @@ class Ui_MainWindow(object):
         else:
             result = result.real
             func = np.fft.rfft
-        result = func(result, n=nfft)
+        result = func(result, n=nperseg)
 
         return result
 
