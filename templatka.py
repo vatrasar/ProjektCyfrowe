@@ -83,6 +83,10 @@ class Ui_MainWindow(object):
         self.segment_512.setObjectName("segment_512")
         self.segment_1024 = QtWidgets.QAction(MainWindow)
         self.segment_1024.setObjectName("segment_1024")
+
+        self.segment_32 = QtWidgets.QAction(MainWindow)
+        self.segment_32.setObjectName("segment_32")
+
         self.actiontriang = QtWidgets.QAction(MainWindow)
         self.actiontriang.setObjectName("actiontriang")
         self.actionblackman = QtWidgets.QAction(MainWindow)
@@ -91,8 +95,6 @@ class Ui_MainWindow(object):
         self.actionhamming.setObjectName("actionhamming")
         self.actionhann = QtWidgets.QAction(MainWindow)
         self.actionhann.setObjectName("actionhann")
-        self.actionbartlett = QtWidgets.QAction(MainWindow)
-        self.actionbartlett.setObjectName("actionbartlett")
         self.actionflattop = QtWidgets.QAction(MainWindow)
         self.actionflattop.setObjectName("actionflattop")
         self.actionparzen = QtWidgets.QAction(MainWindow)
@@ -102,15 +104,16 @@ class Ui_MainWindow(object):
         self.overlap40.addAction(self.overlap20)
         self.overlap40.addAction(self.action40)
         self.overlap40.addAction(self.overlap50)
+        self.menusegmenty.addAction(self.segment_32)
         self.menusegmenty.addAction(self.segment_256)
         self.menusegmenty.addAction(self.segment_512)
+
         self.menusegmenty.addAction(self.segment_1024)
 
         self.menuOkna.addAction(self.actiontriang)
         self.menuOkna.addAction(self.actionblackman)
         self.menuOkna.addAction(self.actionhamming)
         self.menuOkna.addAction(self.actionhann)
-        self.menuOkna.addAction(self.actionbartlett)
         self.menuOkna.addAction(self.actionflattop)
         self.menuOkna.addAction(self.actionparzen)
         self.menubar.addAction(self.menuPlik.menuAction())
@@ -173,8 +176,8 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Piorun"))
         self.menuPlik.setTitle(_translate("MainWindow", "Plik"))
-        self.overlap40.setTitle(_translate("MainWindow", "Overlap"))
-        self.menusegmenty.setTitle(_translate("MainWindow", "Segmenty"))
+        self.overlap40.setTitle(_translate("MainWindow", "Długość zakładki"))
+        self.menusegmenty.setTitle(_translate("MainWindow", "Długość próbki"))
         self.menuOkna.setTitle(_translate("MainWindow", "Okna"))
         self.otworz_plik.setText(_translate("MainWindow", "otwórz"))
         self.overlap_10.setText(_translate("MainWindow", "10"))
@@ -185,11 +188,13 @@ class Ui_MainWindow(object):
         self.segment_256.setText(_translate("MainWindow", "256"))
         self.segment_512.setText(_translate("MainWindow", "512"))
         self.segment_1024.setText(_translate("MainWindow", "1024"))
+
+        self.segment_32.setText(_translate("MainWindow", "32"))
+
         self.actiontriang.setText(_translate("MainWindow", "triang"))
         self.actionblackman.setText(_translate("MainWindow", "blackman"))
         self.actionhamming.setText(_translate("MainWindow", "hamming"))
         self.actionhann.setText(_translate("MainWindow", "hann"))
-        self.actionbartlett.setText(_translate("MainWindow", "bartlett"))
         self.actionflattop.setText(_translate("MainWindow", "flattop"))
         self.actionparzen.setText(_translate("MainWindow", "parzen"))
 

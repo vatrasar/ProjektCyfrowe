@@ -40,7 +40,7 @@ class Gui:
         self.ui.segment_256.triggered.connect(lambda x:self.set_segments(256))
         self.ui.segment_512.triggered.connect(lambda x:self.set_segments(512))
         self.ui.segment_1024.triggered.connect(lambda x:self.set_segments(1024))
-        self.ui.actionbartlett.triggered.connect(lambda x: self.set_window("bartlett"))
+        self.ui.segment_32.triggered.connect(lambda x:self.set_segments(32))
         self.ui.actionblackman.triggered.connect(lambda x: self.set_window("blackman"))
         self.ui.actionflattop.triggered.connect(lambda x: self.set_window("flattop"))
         self.ui.actionhamming.triggered.connect(lambda x: self.set_window("hamming"))
