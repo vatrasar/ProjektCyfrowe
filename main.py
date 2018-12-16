@@ -1,10 +1,8 @@
 from templatka import Ui_MainWindow
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import  QtWidgets
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDial, QFileDialog
 import time
-from scipy import signal
-import matplotlib.pyplot as plt
 import numpy as np
 class Gui:
     def updatePlot(self):
@@ -20,12 +18,11 @@ class Gui:
         range = self.ui.lr.getRegion()
         sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
         sonogram_data = self.ui.data[sonogram_times]
-        f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=256, noverlap=256 // 2, window='hann')
+        f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=self.ui.nperseg, noverlap=abs(self.ui.nperseg*self.ui.overlap), window=self.ui.window)
         amplitudy = np.abs(amplitudy)
         amplitudy = 20 * np.log10(amplitudy)
         self.ui.img.setImage(amplitudy)
-        # self.ui.img.scale(t[-1] / np.size(amplitudy, axis=1),
-        #                   f[-1] / np.size(amplitudy, axis=0))
+
 
     def updateRegion(self):
         pass
@@ -36,22 +33,38 @@ class Gui:
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
         self.ui.otworz_plik.triggered.connect(self.open)
+        self.ui.overlap20.triggered.connect(lambda x:self.set_overlap(0.1))
+        self.ui.overlap30.triggered.connect(lambda x:self.set_overlap(0.2))
+        self.ui.overlap40.triggered.connect(lambda x:self.set_overlap(0.4))
+        self.ui.overlap50.triggered.connect(lambda x:self.set_overlap(0.5))
+        self.ui.segment_256.triggered.connect(lambda x:self.set_segments(256))
+        self.ui.segment_512.triggered.connect(lambda x:self.set_segments(512))
+        self.ui.segment_1024.triggered.connect(lambda x:self.set_segments(1024))
+        self.ui.actionbartlett.triggered.connect(lambda x: self.set_window("bartlett"))
+        self.ui.actionblackman.triggered.connect(lambda x: self.set_window("blackman"))
+        self.ui.actionflattop.triggered.connect(lambda x: self.set_window("flattop"))
+        self.ui.actionhamming.triggered.connect(lambda x: self.set_window("hamming"))
+        self.ui.actionhann.triggered.connect(lambda x: self.set_window("hann"))
+        self.ui.actionparzen.triggered.connect(lambda x: self.set_window("parzen"))
+        self.ui.actiontriang.triggered.connect(lambda x: self.set_window("triang"))
         self.updatePlot()
         self.window=window
+    def set_overlap(self,new_overlap):
+        self.ui.overlap=new_overlap
+        self.update_state(self.ui.file_name,self.window)
+
+    def set_segments(self, new_segements):
+        self.ui.nperseg = new_segements
+        self.update_state(self.ui.file_name, self.window)
+    def set_window(self,new_window):
+        self.ui.window=new_window
+        self.update_state(self.ui.file_name,self.window)
 
     def update_state(self,new_path,window):
         self.ui.update_state(new_path,window)
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
         self.updatePlot()
-        f, t, Zxx = signal.stft(self.ui.data, self.ui.fs, nperseg=256,noverlap=256//2,window='hann')
-        Zxx=abs(Zxx)
-        plt.pcolormesh(t, f, np.abs(Zxx))
-        plt.title('STFT Magnitude')
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-
-        plt.show()
     def open(self):
         path, _ = QFileDialog.getOpenFileName()
         self.update_state(path,window)

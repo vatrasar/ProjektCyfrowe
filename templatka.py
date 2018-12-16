@@ -5,12 +5,11 @@ from PyQt5 import QtCore, QtWidgets
 import numpy as np
 from scipy import fftpack
 from scipy.signal import signaltools
-from scipy.signal._arraytools import const_ext
-from scipy._lib.six import string_types
 from scipy.signal.windows import get_window
 
 
 class Ui_MainWindow(object):
+
 
     def read_data(self,path:str):
 
@@ -23,8 +22,14 @@ class Ui_MainWindow(object):
         self.sekundy = len(data) / float(samplerate)
         self.times = np.arange(len(data)) / float(samplerate)
         self.fs=samplerate
+        self.file_name=path
 
     def setupUi(self, MainWindow,path_to_data):
+
+        self.overlap = 0.5
+        self.nperseg = 256
+        self.window = 'hann'
+
         self.read_data(path_to_data)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 727)
@@ -78,8 +83,6 @@ class Ui_MainWindow(object):
         self.segment_512.setObjectName("segment_512")
         self.segment_1024 = QtWidgets.QAction(MainWindow)
         self.segment_1024.setObjectName("segment_1024")
-        self.actionboxcar = QtWidgets.QAction(MainWindow)
-        self.actionboxcar.setObjectName("actionboxcar")
         self.actiontriang = QtWidgets.QAction(MainWindow)
         self.actiontriang.setObjectName("actiontriang")
         self.actionblackman = QtWidgets.QAction(MainWindow)
@@ -102,7 +105,7 @@ class Ui_MainWindow(object):
         self.menusegmenty.addAction(self.segment_256)
         self.menusegmenty.addAction(self.segment_512)
         self.menusegmenty.addAction(self.segment_1024)
-        self.menuOkna.addAction(self.actionboxcar)
+
         self.menuOkna.addAction(self.actiontriang)
         self.menuOkna.addAction(self.actionblackman)
         self.menuOkna.addAction(self.actionhamming)
@@ -114,7 +117,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.overlap40.menuAction())
         self.menubar.addAction(self.menusegmenty.menuAction())
         self.menubar.addAction(self.menuOkna.menuAction())
-
 
 
         self.retranslateUi(MainWindow)
@@ -134,7 +136,7 @@ class Ui_MainWindow(object):
 
     def make_sonogram(self):
 
-        f, t, amplitudy = self.stft(self.data, self.fs, nperseg=256, noverlap=256 // 2, window='hann')
+        f, t, amplitudy = self.stft(self.data, self.fs, nperseg=self.nperseg, noverlap=abs(self.nperseg*self.overlap), window=self.window)
         self.plot3 = pg.PlotWidget()
         amplitudy = abs(amplitudy)
         amplitudy = 20 * np.log10(amplitudy)
@@ -169,7 +171,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Piorun"))
         self.menuPlik.setTitle(_translate("MainWindow", "Plik"))
         self.overlap40.setTitle(_translate("MainWindow", "Overlap"))
         self.menusegmenty.setTitle(_translate("MainWindow", "Segmenty"))
@@ -183,7 +185,6 @@ class Ui_MainWindow(object):
         self.segment_256.setText(_translate("MainWindow", "256"))
         self.segment_512.setText(_translate("MainWindow", "512"))
         self.segment_1024.setText(_translate("MainWindow", "1024"))
-        self.actionboxcar.setText(_translate("MainWindow", "boxcar"))
         self.actiontriang.setText(_translate("MainWindow", "triang"))
         self.actionblackman.setText(_translate("MainWindow", "blackman"))
         self.actionhamming.setText(_translate("MainWindow", "hamming"))
@@ -191,6 +192,8 @@ class Ui_MainWindow(object):
         self.actionbartlett.setText(_translate("MainWindow", "bartlett"))
         self.actionflattop.setText(_translate("MainWindow", "flattop"))
         self.actionparzen.setText(_translate("MainWindow", "parzen"))
+
+
 
     def update_state(self,new_path,MainWindow):
         self.plot.close()
