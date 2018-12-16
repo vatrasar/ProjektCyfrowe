@@ -8,13 +8,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 class Gui:
     def updatePlot(self):
-        if(time.time()-self.start_time>2):
+        if(time.time()-self.start_time>1):
             item=self.ui.plot2.getPlotItem()
             item.plot(y=self.ui.data,x=self.ui.times)
             self.start_time=time.time()
 
-        self.ui.plot2.setXRange(*self.ui.lr.getRegion(),padding=0)
+        self.update_sonogram()
 
+    def update_sonogram(self):
+        self.ui.plot2.setXRange(*self.ui.lr.getRegion(), padding=0)
+        range = self.ui.lr.getRegion()
+        sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
+        sonogram_data = self.ui.data[sonogram_times]
+        f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=256, noverlap=256 // 2, window='hann')
+        amplitudy = abs(amplitudy)
+        amplitudy = 20 * np.log10(amplitudy)
+        self.ui.img.setImage(amplitudy)
+        # self.ui.img.scale(t[-1] / np.size(amplitudy, axis=1),
+        #                   f[-1] / np.size(amplitudy, axis=0))
 
     def updateRegion(self):
         pass

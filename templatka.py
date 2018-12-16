@@ -86,12 +86,12 @@ class Ui_MainWindow(object):
         pg.mkQApp()
         win = pg.GraphicsLayoutWidget()
 
-        img = pg.ImageItem()
-        self.plot3.addItem(img)
+        self.img = pg.ImageItem()
+        self.plot3.addItem(self.img)
 
         hist = pg.HistogramLUTItem()
 
-        hist.setImageItem(img)
+        hist.setImageItem(self.img)
 
         win.addItem(hist)
 
@@ -104,9 +104,8 @@ class Ui_MainWindow(object):
                        (1.0, (246, 111, 0, 255)),
                        (0.0, (75, 0, 113, 255))]})
 
-        img.setImage(amplitudy)
-
-        img.scale(t[-1] / np.size(amplitudy, axis=1),
+        self.img.setImage(amplitudy)
+        self.img.scale(t[-1] / np.size(amplitudy, axis=1),
                   f[-1] / np.size(amplitudy, axis=0))
         self.plot3.setLabel('bottom', "Time", units='s')
         self.plot3.setLabel('left', "Frequency", units='Hz')
