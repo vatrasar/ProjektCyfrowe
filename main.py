@@ -37,7 +37,8 @@ class Gui:
     def __init__(self,window):
         self.start_time = time.time()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(window,"dzwieki/bzyk.wav")
+        path, _ = QFileDialog.getOpenFileName()
+        self.ui.setupUi(window,path)
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
         self.ui.otworz_plik.triggered.connect(self.open)
@@ -98,10 +99,20 @@ class Gui:
         dialog.exec_()
 
 if __name__ == "__main__":
-    pygame.init()
-    app = QApplication(sys.argv)
-    window=QtWidgets.QMainWindow()
-    gui=Gui(window)
-    b=gui.ui.menubar.actions()
-    window.show()
-    sys.exit(app.exec_())
+    try:
+        pygame.init()
+
+        app = QApplication(sys.argv)
+        window=QtWidgets.QMainWindow()
+        gui=Gui(window)
+        b=gui.ui.menubar.actions()
+        window.show()
+        sys.exit(app.exec_())
+    except ValueError:
+        dialog = QDialog()
+        ok_button = QLabel("Nie można wczytać tego pliku.\n Proszę wybrać inny.", dialog)
+        # ok_button.move(80,50)
+        dialog.resize(200, 80)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.setWindowTitle("Błąd")
+        dialog.exec_()
