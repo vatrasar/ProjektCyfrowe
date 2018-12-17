@@ -18,15 +18,17 @@ class Gui:
 
 
     def update_sonogram(self):
+        #aktualizuje przedział
         self.ui.plot2.setXRange(*self.ui.lr.getRegion(), padding=0)
         range = self.ui.lr.getRegion()
-        sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
-        sonogram_data = self.ui.data[sonogram_times]
-        f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=self.ui.nperseg, noverlap=abs(self.ui.nperseg*self.ui.overlap), window=self.ui.window)
-        amplitudy = np.abs(amplitudy)
-        amplitudy = 20 * np.log10(amplitudy)
-        self.ui.img.setImage(amplitudy)
-        wavfile.write("temp.wav",self.ui.fs,sonogram_data)
+        if range[0]>=0 and range[1]<=self.ui.times[-1]:
+            sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
+            sonogram_data = self.ui.data[sonogram_times]
+            f, t, amplitudy = self.ui.stft(sonogram_data, self.ui.fs, nperseg=self.ui.nperseg, noverlap=abs(self.ui.nperseg*self.ui.overlap), window=self.ui.window)
+            amplitudy = np.abs(amplitudy)
+            amplitudy = 20 * np.log10(amplitudy)
+            self.ui.img.setImage(amplitudy)
+            wavfile.write("temp.wav",self.ui.fs,sonogram_data)
 
 
     def updateRegion(self):
