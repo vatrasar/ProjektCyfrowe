@@ -1,7 +1,8 @@
 from templatka import Ui_MainWindow
-from PyQt5 import  QtWidgets
+from PyQt5 import  QtWidgets,QtCore
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QDial, QFileDialog
+from PyQt5.QtWidgets import QApplication,QFileDialog,QDialog,QPushButton,QLabel
+import PyQt5
 import time
 import numpy as np
 import pygame
@@ -82,8 +83,19 @@ class Gui:
         self.updatePlot()
     def open(self):
         path, _ = QFileDialog.getOpenFileName()
-        self.update_state(path,window)
+        try:
+            self.update_state(path,window)
+        except ValueError:
+            self.alter()
 
+    def alter(self):
+        dialog=QDialog()
+        ok_button=QLabel("Nie można wczytać tego pliku.\n Proszę wybrać inny.",dialog)
+        # ok_button.move(80,50)
+        dialog.resize(200,80)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.setWindowTitle("Błąd")
+        dialog.exec_()
 
 if __name__ == "__main__":
     pygame.init()

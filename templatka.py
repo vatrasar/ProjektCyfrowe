@@ -213,10 +213,12 @@ class Ui_MainWindow(object):
 
 
     def update_state(self,new_path,MainWindow):
+
+        self.read_data(new_path)
         self.plot.close()
         self.plot2.close()
         self.plot3.close()
-        self.read_data(new_path)
+
         self.make_plots()
 
         self.widgetAmlitudaCzas = self.plot
