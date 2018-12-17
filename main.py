@@ -4,6 +4,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDial, QFileDialog
 import time
 import numpy as np
+import pygame
+from scipy.io import wavfile
 class Gui:
     def updatePlot(self):
         if(time.time()-self.start_time>1):
@@ -12,6 +14,8 @@ class Gui:
             self.start_time=time.time()
 
         self.update_sonogram()
+
+
 
     def update_sonogram(self):
         self.ui.plot2.setXRange(*self.ui.lr.getRegion(), padding=0)
@@ -22,6 +26,7 @@ class Gui:
         amplitudy = np.abs(amplitudy)
         amplitudy = 20 * np.log10(amplitudy)
         self.ui.img.setImage(amplitudy)
+        wavfile.write("temp.wav",self.ui.fs,sonogram_data)
 
 
     def updateRegion(self):
@@ -47,6 +52,8 @@ class Gui:
         self.ui.actionhann.triggered.connect(lambda x: self.set_window("hann"))
         self.ui.actionparzen.triggered.connect(lambda x: self.set_window("parzen"))
         self.ui.actiontriang.triggered.connect(lambda x: self.set_window("triang"))
+        self.ui.calosc_odtworz.triggered.connect(self.play_whole_file)
+        self.ui.przedzial.triggered.connect(self.play_part_of_file)
         self.updatePlot()
         self.window=window
     def set_overlap(self,new_overlap):
@@ -59,6 +66,12 @@ class Gui:
     def set_window(self,new_window):
         self.ui.window=new_window
         self.update_state(self.ui.file_name,self.window)
+    def play_whole_file(self):
+        pygame.mixer.music.load(self.ui.file_name)
+        pygame.mixer.music.play()
+    def play_part_of_file(self):
+        pygame.mixer.music.load("temp.wav")
+        pygame.mixer.music.play()
 
     def update_state(self,new_path,window):
         self.ui.update_state(new_path,window)
@@ -71,7 +84,7 @@ class Gui:
 
 
 if __name__ == "__main__":
-
+    pygame.init()
     app = QApplication(sys.argv)
     window=QtWidgets.QMainWindow()
     gui=Gui(window)

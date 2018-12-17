@@ -59,6 +59,8 @@ class Ui_MainWindow(object):
         self.overlap40.setObjectName("overlap40")
         self.menusegmenty = QtWidgets.QMenu(self.menubar)
         self.menusegmenty.setObjectName("menusegmenty")
+        self.menuOdtw_rz = QtWidgets.QMenu(self.menubar)
+        self.menuOdtw_rz.setObjectName("menuOdtw_rz")
         self.menuOkna = QtWidgets.QMenu(self.menubar)
         self.menuOkna.setObjectName("menuOkna")
         MainWindow.setMenuBar(self.menubar)
@@ -99,6 +101,10 @@ class Ui_MainWindow(object):
         self.actionflattop.setObjectName("actionflattop")
         self.actionparzen = QtWidgets.QAction(MainWindow)
         self.actionparzen.setObjectName("actionparzen")
+        self.calosc_odtworz = QtWidgets.QAction(MainWindow)
+        self.calosc_odtworz.setObjectName("calosc_odtworz")
+        self.przedzial = QtWidgets.QAction(MainWindow)
+        self.przedzial.setObjectName("przedzial")
         self.menuPlik.addAction(self.otworz_plik)
         self.overlap40.addAction(self.overlap_10)
         self.overlap40.addAction(self.overlap20)
@@ -120,7 +126,9 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.overlap40.menuAction())
         self.menubar.addAction(self.menusegmenty.menuAction())
         self.menubar.addAction(self.menuOkna.menuAction())
-
+        self.menuOdtw_rz.addAction(self.calosc_odtworz)
+        self.menuOdtw_rz.addAction(self.przedzial)
+        self.menubar.addAction(self.menuOdtw_rz.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -197,6 +205,10 @@ class Ui_MainWindow(object):
         self.actionhann.setText(_translate("MainWindow", "hann"))
         self.actionflattop.setText(_translate("MainWindow", "flattop"))
         self.actionparzen.setText(_translate("MainWindow", "parzen"))
+        self.calosc_odtworz.setText(_translate("MainWindow", "Całość"))
+        self.przedzial.setText(_translate("MainWindow", "Przedział"))
+        self.menuOdtw_rz.setTitle(_translate("MainWindow", "Odtwórz"))
+
 
 
 

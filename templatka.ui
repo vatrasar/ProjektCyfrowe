@@ -74,10 +74,18 @@
     <addaction name="actionflattop"/>
     <addaction name="actionparzen"/>
    </widget>
+   <widget class="QMenu" name="menuOdtw_rz">
+    <property name="title">
+     <string>Odtwórz</string>
+    </property>
+    <addaction name="calosc_odtworz"/>
+    <addaction name="przedzial"/>
+   </widget>
    <addaction name="menuPlik"/>
    <addaction name="overlap40"/>
    <addaction name="menusegmenty"/>
    <addaction name="menuOkna"/>
+   <addaction name="menuOdtw_rz"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionotw_rz">
@@ -163,6 +171,16 @@
   <action name="actionparzen">
    <property name="text">
     <string>parzen</string>
+   </property>
+  </action>
+  <action name="calosc_odtworz">
+   <property name="text">
+    <string>Całość</string>
+   </property>
+  </action>
+  <action name="przedzial">
+   <property name="text">
+    <string>Przedział</string>
    </property>
   </action>
  </widget>
