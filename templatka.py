@@ -153,7 +153,10 @@ class Ui_MainWindow(object):
 
         f, t, amplitudy = self.stft(self.data, self.fs, nperseg=self.nperseg, noverlap=abs(self.nperseg*self.overlap), window=self.window)
         self.plot3 = pg.PlotWidget()
-        amplitudy = abs(amplitudy)
+        amplitudy = np.abs(amplitudy)
+        not_zero_amplitudy=amplitudy[amplitudy!=0]
+        amplitudy[amplitudy==0]=np.min(not_zero_amplitudy)
+
         amplitudy = 20 * np.log10(amplitudy)
         #tworzenie sonogramu(obrazka)
         pg.setConfigOptions(imageAxisOrder='row-major')
@@ -192,11 +195,11 @@ class Ui_MainWindow(object):
         self.menusegmenty.setTitle(_translate("MainWindow", "Długość próbki"))
         self.menuOkna.setTitle(_translate("MainWindow", "Okna"))
         self.otworz_plik.setText(_translate("MainWindow", "otwórz"))
-        self.overlap_10.setText(_translate("MainWindow", "10"))
-        self.overlap20.setText(_translate("MainWindow", "20"))
-        self.overlap30.setText(_translate("MainWindow", "30"))
-        self.action40.setText(_translate("MainWindow", "40"))
-        self.overlap50.setText(_translate("MainWindow", "50"))
+        self.overlap_10.setText(_translate("MainWindow", "10%"))
+        self.overlap20.setText(_translate("MainWindow", "20%"))
+        self.overlap30.setText(_translate("MainWindow", "30%"))
+        self.action40.setText(_translate("MainWindow", "40%"))
+        self.overlap50.setText(_translate("MainWindow", "50%"))
         self.segment_256.setText(_translate("MainWindow", "256"))
         self.segment_512.setText(_translate("MainWindow", "512"))
         self.segment_1024.setText(_translate("MainWindow", "1024"))

@@ -1,10 +1,8 @@
 from templatka import Ui_MainWindow
 from PyQt5 import  QtWidgets,QtCore
 import sys
-from PyQt5.QtWidgets import QApplication,QFileDialog,QDialog,QPushButton,QLabel
-import PyQt5
+from PyQt5.QtWidgets import QApplication,QFileDialog,QDialog,QLabel
 import time
-import numpy as np
 import pygame
 from scipy.io import wavfile
 class Gui:
