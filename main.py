@@ -33,7 +33,12 @@ class Gui:
     def __init__(self,window):
         self.start_time = time.time()
         self.ui = Ui_MainWindow()
+        path: str
         path, _ = QFileDialog.getOpenFileName()
+        while path.find("wav")==-1:
+            self.alter()
+            path, _ = QFileDialog.getOpenFileName()
+
         self.ui.setupUi(window,path)
         self.ui.lr.sigRegionChanged.connect(self.updatePlot)
         self.ui.plot2.sigXRangeChanged.connect(self.updateRegion)
@@ -80,10 +85,14 @@ class Gui:
         self.updatePlot()
     def open(self):
         path, _ = QFileDialog.getOpenFileName()
+        while path.find("wav")==-1:
+            self.alter()
+            path, _ = QFileDialog.getOpenFileName()
         try:
             self.update_state(path,window)
         except ValueError:
             self.alter()
+
 
     def alter(self):
         dialog=QDialog()
