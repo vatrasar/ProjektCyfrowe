@@ -24,6 +24,7 @@ class Ui_MainWindow(object):
         self.fs=samplerate
         self.file_name=path
 
+
     def setupUi(self, MainWindow,path_to_data):
 
         self.overlap = 0.5
@@ -139,11 +140,14 @@ class Ui_MainWindow(object):
         self.plot.addItem(self.lr)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
     def make_plots(self):
         self.plot = pg.PlotWidget(y=self.data, x=self.times)
         self.plot2 = pg.PlotWidget(y=self.data, x=self.times)
         self.make_sonogram()
+        self.plot2.setLabel('bottom', "Time", units='s')
+        self.plot2.setLabel('left', "Amplitude", units='')
+        self.plot.setLabel('bottom', "Time", units='s')
+        self.plot.setLabel('left', "Amplitude", units='')
 
     def make_sonogram(self):
 
@@ -266,7 +270,6 @@ class Ui_MainWindow(object):
 
         if np.result_type(win,np.complex64) != outdtype:
             win = win.astype(outdtype)
-
 
 
         scale = 1.0 / win.sum()**2

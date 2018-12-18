@@ -22,7 +22,7 @@ class Gui:
         #aktualizuje przedział
         self.ui.plot2.setXRange(*self.ui.lr.getRegion(), padding=0)
         range = self.ui.lr.getRegion()
-       
+
         sonogram_times = (self.ui.times > range[0]) & (self.ui.times < range[1])
         sonogram_data = self.ui.data[sonogram_times]
 
