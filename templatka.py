@@ -27,9 +27,9 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow,path_to_data):
 
-        self.overlap = 0.5
+        self.overlap = 0.1
         self.nperseg = 256
-        self.window = 'hann'
+        self.window = 'hamming'
 
         self.read_data(path_to_data)
         MainWindow.setObjectName("MainWindow")
@@ -245,7 +245,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    def stft(self,x, fs=1.0, window='hann', nperseg=256, noverlap=None):
+    def stft(self,x, fs=1.0, window='hamming', nperseg=256, noverlap=None):
 
         x = np.asarray(x)
 
@@ -266,7 +266,7 @@ class Ui_MainWindow(object):
 
 
         if noverlap is None:
-            noverlap = nperseg//2
+            noverlap = nperseg*0.5
         else:
             noverlap = int(noverlap)
 
